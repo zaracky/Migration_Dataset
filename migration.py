@@ -3,8 +3,8 @@ from pymongo import MongoClient
 
 # Configuration MongoDB
 MONGO_URI = "**mongodb://localhost:27017**"  # URL de connexion MongoDB (adapter si nécessaire)
-DATABASE_NAME = "**ma_base_de_donnees**"     # Nom de la base de données
-COLLECTION_NAME = "**ma_collection**"        # Nom de la collection
+DATABASE_NAME = "**bdd_test**"     # Nom de la base de données
+COLLECTION_NAME = "**bdd_test**"        # Nom de la collection
 
 CSV_FILE_PATH = "**chemin/vers/votre_fichier.csv**"  # Chemin du fichier CSV
 
