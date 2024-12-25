@@ -17,3 +17,35 @@ with open(csv_file_path, mode="r", encoding="utf-8") as csv_file:
 
 print("Données insérées avec succès.")
 
+
+def test_integrity(collection):
+    print("Début des tests d'intégrité...")
+    
+    # Vérification des colonnes
+    columns = ["Name","Age","Gender","Blood Type","Medical Condition","Date of Admission","Doctor","Hospital","Insurance Provider","Billing Amount","Room Number","Admission Type","Discharge Date","Medication","Test Results"]
+    documents = collection.find()
+    for doc in documents:
+        for col in columns:
+            if col not in doc:
+                print(f"Colonne manquante : {col}")
+            elif col == "age" and not isinstance(doc[col], int):
+                print(f"Type incorrect pour {col} : {type(doc[col])}")
+
+    # Vérification des doublons
+    pipeline = [
+        {"$group": {"_id": "$nom", "count": {"$sum": 1}}},
+        {"$match": {"count": {"$gt": 1}}}
+    ]
+    duplicates = collection.aggregate(pipeline)
+    for dup in duplicates:
+        print(f"Doublon trouvé : {dup['_id']}")
+    
+    # Vérification des valeurs manquantes
+    documents = collection.find()
+    for doc in documents:
+        for key, value in doc.items():
+            if value in [None, ""]:
+                print(f"Valeur manquante pour {key} dans {doc}")
+    
+    print("Tests d'intégrité terminés.")
+test_integrity(collection)
