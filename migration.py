@@ -1,5 +1,17 @@
 import csv
 from pymongo import MongoClient
+from pymongo import MongoClient, errors
+
+# Configuration du journal de log
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("data_migration.log"),  # Fichier log
+        logging.StreamHandler()  # Affichage console
+    ]
+)
+
 
 # Connexion à MongoDB
 client = MongoClient("mongodb://localhost:27017")
