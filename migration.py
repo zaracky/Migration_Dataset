@@ -1,5 +1,5 @@
 import csv
-from pymongo import MongoClient
+import logging
 from pymongo import MongoClient, errors
 
 # Configuration du journal de log
@@ -11,6 +11,47 @@ logging.basicConfig(
         logging.StreamHandler()  # Affichage console
     ]
 )
+
+# Fonction pour nettoyer et transformer les types de données
+def transform_row(row):
+    """
+    Transforme les types de données dans une ligne du fichier CSV.
+    """
+    try:
+        # Convertir la colonne 'Age' en entier
+        if "Age" in row and row["Age"].strip().isdigit():
+            row["Age"] = int(row["Age"].strip())  # Convertir Age en entier
+        else:
+            logging.error(f"Valeur invalide pour 'Age' : {row['Age']} dans la ligne {row}")
+
+        # Convertir la colonne 'Billing Amount' en flottant
+        if "Billing Amount" in row:
+            try:
+                row["Billing Amount"] = float(row["Billing Amount"].strip())  # Convertir Billing Amount en flottant
+            except ValueError:
+                logging.error(f"Valeur invalide pour 'Billing Amount' : {row['Billing Amount']} dans la ligne {row}")
+        
+        # Convertir la colonne 'Room Number' en entier
+        if "Room Number" in row and row["Room Number"].strip().isdigit():
+            row["Room Number"] = int(row["Room Number"].strip())  # Convertir Room Number en entier
+        else:
+            logging.error(f"Valeur invalide pour 'Room Number' : {row['Room Number']} dans la ligne {row}")
+
+    except ValueError as e:
+        logging.error(f"Erreur de conversion des types dans la ligne : {row}. Erreur : {e}")
+    return row
+
+# Connexion à MongoDB
+def connect_to_mongodb(uri="mongodb://localhost:27017", db_name="entreprise", collection_name="employes"):
+    try:
+        client = MongoClient(uri)
+        db = client[db_name]
+        collection = db[collection_name]
+        logging.info(f"Connexion réussie à MongoDB : {uri}, Base : {db_name}, Collection : {collection_name}")
+        return collection
+    except errors.ConnectionError as e:
+        logging.error(f"Erreur de connexion à MongoDB : {e}")
+        raise
 
 # Importation des données CSV avec insertion par lots
 def import_csv_to_mongodb(csv_file_path, collection, batch_size=1000):
@@ -40,7 +81,6 @@ def import_csv_to_mongodb(csv_file_path, collection, batch_size=1000):
         raise
     except errors.BulkWriteError as bwe:
         logging.error(f"Erreur lors de l'insertion en lot : {bwe.details}")
-
 
 # Test d'intégrité des données
 def test_data_integrity(collection):
@@ -101,5 +141,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
