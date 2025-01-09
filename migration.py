@@ -42,7 +42,8 @@ def transform_row(row):
     return row
 
 # Connexion à MongoDB
-def connect_to_mongodb(uri="mongodb://localhost:27017", db_name="entreprise", collection_name="employes"):
+def connect_to_mongodb(uri="mongodb://admin:adminpassword@mongodb:27017", db_name="entreprise", collection_name="employes"):
+
     try:
         client = MongoClient(uri)
         db = client[db_name]
@@ -56,6 +57,7 @@ def connect_to_mongodb(uri="mongodb://localhost:27017", db_name="entreprise", co
 # Importation des données CSV avec insertion par lots
 def import_csv_to_mongodb(csv_file_path, collection, batch_size=1000):
     try:
+
         with open(csv_file_path, mode="r", encoding="utf-8") as csv_file:
             reader = csv.DictReader(csv_file)
             batch = []
@@ -127,10 +129,9 @@ def test_data_integrity(collection):
     else:
         logging.warning("Certains tests d'intégrité ont échoué.")
 
-
 # Fonction principale
 def main():
-    csv_file_path = r"C:\Users\Loic\Documents\healthcare_dataset.csv"  # Chemin vers le fichier CSV
+    csv_file_path = r"/usr/src/app/healthcare_dataset.csv"  # Chemin vers le fichier CSV
     collection = connect_to_mongodb()
     
     # Importation des données
