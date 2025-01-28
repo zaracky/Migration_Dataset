@@ -69,9 +69,11 @@ Vérification de l'intégrité des données : Le script vérifie l'intégrité d
 
 ## Indexation
 Après l'importation des données, le script crée des index sur les colonnes suivantes :
+
 Name
 Room Number
 Date of Admission
+
 Cela permet d'améliorer les performances des recherches sur ces champs.
 
 ## Gestion des logs
