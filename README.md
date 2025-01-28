@@ -53,13 +53,18 @@ Le processus est entièrement journalisé pour permettre de suivre l'avancement 
 ## Comment exécuter le script
 Assurez-vous que MongoDB est en cours d'exécution et accessible via l'URI spécifié dans votre fichier .env.
 Lancez le script Python pour importer les données depuis le fichier CSV dans la base de données MongoDB :
+
 python script.py
+
 Le script procédera à la transformation des données du fichier CSV, à la vérification des doublons et à l'insertion dans la collection MongoDB. Les logs de l'exécution seront enregistrés dans le fichier data_migration.log.
 
 ## Fonctionnalités du script
 Transformation des données : Le script nettoie et transforme certaines colonnes du CSV (par exemple, la conversion des âges en entiers, le montant de facturation en flottants).
+
 Création des utilisateurs MongoDB : Les utilisateurs sont créés automatiquement avec les rôles appropriés (consultant, devs, admin) en fonction des paramètres dans le fichier .env.
+
 Insertion des données : Les données sont insérées dans la base de données MongoDB en lots (1000 documents par lot).
+
 Vérification de l'intégrité des données : Le script vérifie l'intégrité des données importées (absence de doublons et types corrects pour certaines colonnes).
 
 ## Indexation
