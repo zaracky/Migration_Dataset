@@ -51,14 +51,16 @@ Recherche des valeurs manquantes dans les documents insérés.
 Le processus est entièrement journalisé pour permettre de suivre l'avancement et de repérer les erreurs éventuelles. Un fichier data_migration.log est créé pour conserver l'historique des actions.
 
 ## Comment exécuter le script
-### Mettre à jour le chemin du fichier CSV : 
-Assurez-vous que le chemin vers le fichier CSV est correct dans le script, en remplaçant la variable csv_file_path par le chemin vers votre fichier.
-
-csv_file_path = r"C:\Users\Loic\Documents\healthcare_dataset.csv"  # Remplacez par le chemin de votre fichier CSV
-
-### Exécuter le script : Vous pouvez maintenant exécuter le script à partir de la ligne de commande en utilisant la commande suivante :
+Assurez-vous que MongoDB est en cours d'exécution et accessible via l'URI spécifié dans votre fichier .env.
+Lancez le script Python pour importer les données depuis le fichier CSV dans la base de données MongoDB :
 python script.py
-Le script commencera à importer les données du fichier CSV dans MongoDB et effectuera les tests d'intégrité. Les résultats seront affichés dans la console et enregistrés dans le fichier de log data_migration.log.
+Le script procédera à la transformation des données du fichier CSV, à la vérification des doublons et à l'insertion dans la collection MongoDB. Les logs de l'exécution seront enregistrés dans le fichier data_migration.log.
+
+## Fonctionnalités du script
+Transformation des données : Le script nettoie et transforme certaines colonnes du CSV (par exemple, la conversion des âges en entiers, le montant de facturation en flottants).
+Création des utilisateurs MongoDB : Les utilisateurs sont créés automatiquement avec les rôles appropriés (consultant, devs, admin) en fonction des paramètres dans le fichier .env.
+Insertion des données : Les données sont insérées dans la base de données MongoDB en lots (1000 documents par lot).
+Vérification de l'intégrité des données : Le script vérifie l'intégrité des données importées (absence de doublons et types corrects pour certaines colonnes).
 
 ## Indexation
 Après l'importation des données, le script crée des index sur les colonnes suivantes :
