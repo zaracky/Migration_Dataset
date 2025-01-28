@@ -2,11 +2,12 @@
 
 ## Table des matières
 
-1. [Logique de la migration](#logique-de-la-migration)
+
+1. [Fonctionnement et utilité du programme](#fonctionnement-et-utilité-du-programme)
 2. [Déploiement et exécution](#déploiement-et-exécution)
-3. [Système d'authentification et rôles utilisateurs](#système-dauthentification-et-rôles-utilisateurs)
-4. [Schéma de la base de données](#schéma-de-la-base-de-données)
-5. [Structure du projet](#structure-du-projet)
+4. [Système d'authentification et rôles utilisateurs](#système-dauthentification-et-rôles-utilisateurs)
+5. [Schéma de la base de données](#schéma-de-la-base-de-données)
+6. [Structure du projet](#structure-du-projet)
    
 ## Introduction
 
@@ -15,9 +16,27 @@ Ce projet permet d'importer des données depuis un fichier CSV dans une base de 
 Ce document décrit la logique de migration, le déploiement du programme, le système d'authentification et les rôles utilisateurs, ainsi que le schéma de la base de données.
 
 ---
-## Logique de la migration
+## Fonctionnement et utilité du programme
 
-La logique de la migration est divisée en plusieurs étapes, qui permettent de convertir les données du fichier CSV en documents MongoDB valides...
+Le programme vise à automatiser l'importation de données depuis un fichier CSV dans une base de données MongoDB. L'objectif principal est de permettre à l'utilisateur de charger des informations structurées (comme celles d'une clinique ou d'un hôpital) dans MongoDB avec un nettoyage et une validation des données.
+
+### Processus principal :
+
+1. **Chargement des données CSV** : Le fichier CSV est lu ligne par ligne.
+2. **Transformation des données** : Les données sont vérifiées et converties dans des types compatibles avec MongoDB (par exemple, conversion des âges en entiers, des montants de facturation en flottants, etc.).
+3. **Vérification des doublons** : Avant d'insérer chaque ligne, le programme vérifie si un document avec des données similaires existe déjà dans la base de données pour éviter les doublons.
+4. **Insertion dans MongoDB** : Les données validées sont insérées dans la base de données MongoDB en utilisant des insertions par lots pour optimiser les performances.
+5. **Création d'index** : Après l'insertion, des index sont créés sur certains champs clés comme "Nom", "Numéro de chambre", et "Date d'admission" pour accélérer les recherches.
+6. **Logging des opérations** : Le processus utilise un système de logging pour suivre l'état des différentes étapes du programme (chargement des données, vérification des doublons, insertions réussies ou échouées, erreurs de transformation de données, etc.). Cela permet à l'utilisateur de suivre l'avancement de l'importation et de diagnostiquer les erreurs de manière plus efficace.
+
+### Utilité pour l'utilisateur
+
+- **Gain de temps** : L'automatisation de l'importation et de la validation des données permet de réduire les erreurs humaines et d'éviter des processus manuels longs.
+- **Validité des données** : Le programme effectue des vérifications et conversions de données pour s'assurer qu'elles sont conformes aux attentes avant de les insérer dans la base de données.
+- **Évolutivité** : Il peut traiter de grandes quantités de données sans compromettre la performance, en utilisant des insertions par lots et des vérifications de doublons.
+
+
+
 
 ## Déploiement et exécution
 
@@ -37,85 +56,52 @@ La logique de la migration est divisée en plusieurs étapes, qui permettent de 
 
 2.Créez un fichier .env dans le répertoire racine du projet et ajoutez vos informations de connexion MongoDB ainsi que les paramètres de la base de données. Voici un exemple de contenu pour votre fichier .env :
 
-MONGO_INITDB_ROOT_USERNAME=admin
+`MONGO_INITDB_ROOT_USERNAME=admin`
 
-MONGO_INITDB_ROOT_PASSWORD=adminpassword
+`MONGO_INITDB_ROOT_PASSWORD=adminpassword`
 
-MONGO_HOST=mongodb
+`MONGO_HOST=mongodb`
 
-MONGO_PORT=27017
+`MONGO_PORT=27017`
 
-DATABASE_NAME=entreprise
+`DATABASE_NAME=entreprise`
 
-COLLECTION_NAME=employes
+`COLLECTION_NAME=employes`
 
 3. Installez les dépendances :
 
 `pip install -r requirements.txt`
 
-4. Construisez et lancez les conteneurs Docker :
+4.Vérifiez votre instance MongoDB : 
+Assurez-vous que MongoDB fonctionne et que vous pouvez vous connecter avec les informations fournies dans le fichier .env. Si vous utilisez Docker pour MongoDB, assurez-vous que le conteneur est en cours d'exécution:
+
 `docker-compose up --build `
+## Exécution du script
+Une fois que vous avez configuré l'environnement, vous pouvez exécuter le script principal (script.py) avec la commande suivante :
 
-5. Une fois le programme lancé, le script commencera à importer les données depuis le fichier CSV vers la base de données MongoDB.
+`python script.py`
 
-## Fonctionnement et utilité du programme
+Le script va :
 
-Le programme vise à automatiser l'importation de données depuis un fichier CSV dans une base de données MongoDB. L'objectif principal est de permettre à l'utilisateur de charger des informations structurées (comme celles d'une clinique ou d'un hôpital) dans MongoDB avec un nettoyage et une validation des données.
+- Se connecter à MongoDB avec les informations contenues dans le fichier .env.
 
-### Processus principal :
+- Charger les données du fichier CSV spécifié (healthcare_dataset.csv).
 
-1. **Chargement des données CSV** : Le fichier CSV est lu ligne par ligne.
-2. **Transformation des données** : Les données sont vérifiées et converties dans des types compatibles avec MongoDB (par exemple, conversion des âges en entiers, des montants de facturation en flottants, etc.).
-3. **Vérification des doublons** : Avant d'insérer chaque ligne, le programme vérifie si un document avec des données similaires existe déjà dans la base de données pour éviter les doublons.
-4. **Insertion dans MongoDB** : Les données validées sont insérées dans la base de données MongoDB en utilisant des insertions par lots pour optimiser les performances.
-5. **Création d'index** : Après l'insertion, des index sont créés sur certains champs clés comme "Nom", "Numéro de chambre", et "Date d'admission" pour accélérer les recherches.
+- Transformer et valider les données.
 
-Le programme est particulièrement utile pour les environnements où les données évoluent fréquemment et où il est nécessaire d'importer de grandes quantités de données sans perte de performance.
+- Insérer les données dans MongoDB (par lots de 1000 documents).
 
-### Utilité pour l'utilisateur
+- Créer des index pour améliorer les performances de recherche sur certains champs.
 
-- **Gain de temps** : L'automatisation de l'importation et de la validation des données permet de réduire les erreurs humaines et d'éviter des processus manuels longs.
-- **Validité des données** : Le programme effectue des vérifications et conversions de données pour s'assurer qu'elles sont conformes aux attentes avant de les insérer dans la base de données.
-- **Évolutivité** : Il peut traiter de grandes quantités de données sans compromettre la performance, en utilisant des insertions par lots et des vérifications de doublons.
+- Logger les étapes du processus (insertion, vérification des doublons, erreurs, etc.).
 
-- 
 
-## Fonctionnement du script
+### Logs
 
-Le script suit les étapes suivantes :
+Les logs seront enregistrés dans un fichier nommé data_migration.log. Vous pouvez consulter ce fichier pour vérifier l'état de l'importation et résoudre tout problème potentiel.
 
-### 1. Connexion à MongoDB
+Si vous souhaitez exécuter ce script automatiquement dans un environnement Docker, vous pouvez également utiliser le fichier `docker-compose.yml` pour démarrer les services nécessaires, notamment MongoDB et votre application Python.
 
-Le script se connecte à une instance de MongoDB à l'adresse `localhost` (ou une autre adresse si nécessaire) et accède à une base de données et une collection spécifiques. Dans le code, la base de données utilisée est `entreprise` et la collection est `employes`. Voici un extrait de code de cette connexion :
-
-client = MongoClient("mongodb://localhost:27017")
-
-db = client["entreprise"]  # Nom de la base de données
-
-collection = db["employes"]  # Nom de la collection
-
-### 2. Importation des données depuis un CSV
-Le script lit un fichier CSV contenant les données et les transforme pour correspondre aux types attendus (par exemple, les valeurs numériques sont converties en int ou float).
-
-### 3. Insertion dans MongoDB
-Les données sont insérées dans MongoDB par lots pour éviter les problèmes liés à l'insertion de grandes quantités de données. Cela permet d'optimiser les performances du processus.
-
-### 4. Vérification de l'intégrité des données :
-Vérification que toutes les colonnes attendues sont présentes.
-Vérification des doublons dans les données.
-Vérification de la validité des types de données (par exemple, s'assurer que l'âge est un nombre entier).
-Recherche des valeurs manquantes dans les documents insérés.
-
-### 5. Journalisation (Logging)
-Le processus est entièrement journalisé pour permettre de suivre l'avancement et de repérer les erreurs éventuelles. Un fichier data_migration.log est créé pour conserver l'historique des actions.
-
-## Comment exécuter le script
-Assurez-vous que MongoDB est en cours d'exécution et accessible via l'URI spécifié dans votre fichier .env.
-Lancez le script Python pour importer les données depuis le fichier CSV dans la base de données MongoDB :
-
-python script.py
-
-Le script procédera à la transformation des données du fichier CSV, à la vérification des doublons et à l'insertion dans la collection MongoDB. Les logs de l'exécution seront enregistrés dans le fichier data_migration.log.
 
 ## Système d'authentification et rôles utilisateurs
 Le système d'authentification dans ce projet repose sur la création de plusieurs utilisateurs avec différents rôles. Ces utilisateurs ont accès à la base de données MongoDB avec des privilèges spécifiques :
@@ -167,10 +153,6 @@ project/
 ├── script.py                 # Script Python d'importation des données
 
 ├── healthcare_dataset.csv    # Fichier CSV des données à importer
-
-├── images/                   # Dossier contenant les schémas et diagrammes
-
-│   └── database_schema.png   # Schéma de la base de données
 
 └── README.md                 # Documentation du projet
 
