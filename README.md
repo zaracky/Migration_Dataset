@@ -150,9 +150,9 @@ project/
 
 ├── requirements.txt          # Liste des dépendances Python
 
-├── script.py                 # Script Python d'importation des données
+├── migration.py                 # Script Python d'importation des données
 
-├── healthcare_dataset.csv    # Fichier CSV des données à importer
+├── fichier.csv    # Fichier CSV des données à importer
 
 └── README.md                 # Documentation du projet
 
