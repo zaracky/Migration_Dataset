@@ -18,11 +18,17 @@ Ce projet permet de migrer des données contenues dans un fichier CSV vers une b
 git clone https://github.com/zaracky/Migration_Dataset.git
 
 2.Créez un fichier .env dans le répertoire racine du projet et ajoutez vos informations de connexion MongoDB ainsi que les paramètres de la base de données. Voici un exemple de contenu pour votre fichier .env :
+
 MONGO_INITDB_ROOT_USERNAME=admin
+
 MONGO_INITDB_ROOT_PASSWORD=adminpassword
+
 MONGO_HOST=mongodb
+
 MONGO_PORT=27017
+
 DATABASE_NAME=entreprise
+
 COLLECTION_NAME=employes
 
 ## Fonctionnement du script
@@ -32,8 +38,11 @@ Le script suit les étapes suivantes :
 ### 1. Connexion à MongoDB
 
 Le script se connecte à une instance de MongoDB à l'adresse `localhost` (ou une autre adresse si nécessaire) et accède à une base de données et une collection spécifiques. Dans le code, la base de données utilisée est `entreprise` et la collection est `employes`. Voici un extrait de code de cette connexion :
+
 client = MongoClient("mongodb://localhost:27017")
+
 db = client["entreprise"]  # Nom de la base de données
+
 collection = db["employes"]  # Nom de la collection
 
 ### 2. Importation des données depuis un CSV
@@ -47,6 +56,7 @@ Vérification que toutes les colonnes attendues sont présentes.
 Vérification des doublons dans les données.
 Vérification de la validité des types de données (par exemple, s'assurer que l'âge est un nombre entier).
 Recherche des valeurs manquantes dans les documents insérés.
+
 ### 5. Journalisation (Logging)
 Le processus est entièrement journalisé pour permettre de suivre l'avancement et de repérer les erreurs éventuelles. Un fichier data_migration.log est créé pour conserver l'historique des actions.
 
@@ -71,7 +81,9 @@ Vérification de l'intégrité des données : Le script vérifie l'intégrité d
 Après l'importation des données, le script crée des index sur les colonnes suivantes :
 
 Name
+
 Room Number
+
 Date of Admission
 
 Cela permet d'améliorer les performances des recherches sur ces champs.
