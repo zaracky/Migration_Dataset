@@ -5,3 +5,4 @@ Bibliothèques Python : Vous devez installer certaines bibliothèques Python via
 Installation des dépendances :
 Pour installer les dépendances requises, vous pouvez utiliser la commande suivante :
 pip install pymongo
+pip install python-dotenv pymongo
