@@ -2,6 +2,11 @@ import csv
 import logging
 from pymongo import MongoClient, errors
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Configuration du journal de log
 logging.basicConfig(
@@ -12,6 +17,14 @@ logging.basicConfig(
         logging.StreamHandler()  # Affichage console
     ]
 )
+
+# Récupérer les variables d'environnement pour MongoDB
+admin_user = os.getenv("ADMIN_USERNAME")
+admin_password = os.getenv("ADMIN_PASSWORD")
+mongo_host = os.getenv("MONGO_HOST", "localhost")
+mongo_port = os.getenv("MONGO_PORT", "27017")
+database_name = os.getenv("DATABASE_NAME", "entreprise")
+collection_name = os.getenv("COLLECTION_NAME", "entreprise")
 
 # Fonction pour nettoyer et transformer les types de données
 def transform_row(row):
@@ -62,13 +75,16 @@ def transform_row(row):
     return row
 
 # Connexion à MongoDB
-def connect_to_mongodb(uri="mongodb://admin:adminpassword@mongodb:27017", db_name="entreprise", collection_name="employes"):
-
+def connect_to_mongodb(db_name=database_name, collection_name=collection_name):
+    """
+    Se connecte à MongoDB en tant qu'utilisateur admin.
+    """
+    uri = f"mongodb://{admin_user}:{admin_password}@{mongo_host}:{mongo_port}/{db_name}"
     try:
         client = MongoClient(uri)
         db = client[db_name]
         collection = db[collection_name]
-        logging.info(f"Connexion réussie à MongoDB : {uri}, Base : {db_name}, Collection : {collection_name}")
+        logging.info(f"Connexion réussie à MongoDB : {mongo_host}:{mongo_port}, Base : {db_name}, Collection : {collection_name}")
         return collection
     except errors.ConnectionError as e:
         logging.error(f"Erreur de connexion à MongoDB : {e}")
