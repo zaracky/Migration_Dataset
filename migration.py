@@ -110,7 +110,7 @@ def create_indexes(collection):
 
 
 # Importation des données CSV avec insertion par lots
-def import_csv_to_mongodb(csv_file_path, collection, batch_size=1000):
+def import_csv_to_mongodb(csv_file_path, collection, batch_size=5000):
     try:
         with open(csv_file_path, mode="r", encoding="utf-8") as csv_file:
             reader = csv.DictReader(csv_file)
