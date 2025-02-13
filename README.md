@@ -66,7 +66,7 @@ Le programme vise à automatiser l'importation de données depuis un fichier CSV
 
 `DATABASE_NAME=entreprise`
 
-`COLLECTION_NAME=employes`
+`COLLECTION_NAME=patients`
 
 3. Installez les dépendances :
 
@@ -111,11 +111,11 @@ Le système d'authentification dans ce projet repose sur la création de plusieu
 Accès complet à la base de données.
 Peut créer, modifier et supprimer des données ainsi que gérer les utilisateurs.
 
-#### Devs (readWrite) :
+#### Medecin (readWrite) :
 Accès en lecture et écriture à la base de données.
 Peut manipuler les documents dans la base de données.
 
-#### Consultant (read) :
+#### Secretaire (read) :
 Accès en lecture uniquement.
 Ne peut pas modifier les données, mais peut consulter les informations dans la base de données.
 
