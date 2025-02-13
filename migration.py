@@ -19,8 +19,8 @@ logging.basicConfig(
 )
 
 # Récupérer les variables d'environnement pour MongoDB
-admin_user = os.getenv("ADMIN_USERNAME")
-admin_password = os.getenv("ADMIN_PASSWORD")
+dev_user = os.getenv("DEV_USERNAME")
+dev_password = os.getenv("DEV_PASSWORD")
 mongo_host = os.getenv("MONGO_HOST", "localhost")
 mongo_port = os.getenv("MONGO_PORT", "27017")
 database_name = os.getenv("DATABASE_NAME", "entreprise")
@@ -79,7 +79,7 @@ def connect_to_mongodb(db_name=database_name, collection_name=collection_name):
     """
     Se connecte à MongoDB en tant qu'utilisateur admin.
     """
-    uri = f"mongodb://{admin_user}:{admin_password}@{mongo_host}:{mongo_port}/{db_name}"
+    uri = f"mongodb://{dev_user}:{dev_password}@{mongo_host}:{mongo_port}/{db_name}"
     try:
         client = MongoClient(uri)
         db = client[db_name]
