@@ -11,9 +11,8 @@ services:
     volumes:
       - mongodb_data:/data/db  # Volume pour les données persistantes de MongoDB
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js  # Script d'initialisation pour MongoDB
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    env_file: 
+      - .env  # Charge toutes les variables d'environnement du fichier .env
     restart: unless-stopped
 
   app:
@@ -23,20 +22,11 @@ services:
       - mongodb
     networks:
       - mongo_network
-    environment:
-      - MONGO_HOST=${MONGO_HOST}
-      - MONGO_PORT=${MONGO_PORT}
-      - DATABASE_NAME=${DATABASE_NAME}
-      - CONSULTANT_USERNAME=${CONSULTANT_USERNAME}
-      - CONSULTANT_PASSWORD=${CONSULTANT_PASSWORD}
-      - DEVS_USERNAME=${DEVS_USERNAME}
-      - DEVS_PASSWORD=${DEVS_PASSWORD}
-      - ADMIN_USERNAME=${ADMIN_USERNAME}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    env_file: 
+      - .env  # Charge toutes les variables d'environnement du fichier .env
     volumes:
       - ./script.py:/usr/src/app/script.py  # Montée du script Python
       - ./healthcare_dataset.csv:/usr/src/app/healthcare_dataset.csv  # Montée du fichier CSV
-      - .env:/usr/src/app/.env  # Montée du fichier .env
     restart: on-failure
 
 networks:
