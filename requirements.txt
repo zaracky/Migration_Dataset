@@ -1,8 +1,2 @@
-Python 3.x : Assurez-vous d'avoir Python installé sur votre machine.
-MongoDB : Une instance MongoDB doit être en fonctionnement localement ou sur un serveur distant.
-Bibliothèques Python : Vous devez installer certaines bibliothèques Python via pip avant d'exécuter le script.
-
-Installation des dépendances :
-Pour installer les dépendances requises, vous pouvez utiliser la commande suivante :
-pip install pymongo
-pip install python-dotenv pymongo
+pymongo
+python-dotenv
