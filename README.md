@@ -95,8 +95,19 @@ Le script va :
 
 - Logger les étapes du processus (insertion, vérification des doublons, erreurs, etc.).
 
+## Exécution via Docker
 
-### Logs
+Ce projet peut également être exécuté dans un environnement Docker, composé d'un conteneur MongoDB et d'un conteneur pour la migration. Vous trouverez tous les éléments nécessaires pour configurer ces conteneurs dans ce projet, notamment :
+
+`docker-compose.yml` : pour lancer les conteneurs avec la configuration requise.
+
+`init-mongo.js` : un script d'initialisation pour MongoDB avec les utilisateurs et rôles nécessaires.
+
+Vous pouvez utiliser la commande suivante pour déployer l'environnement Docker :
+`docker-compose up`
+
+Cela démarre MongoDB et l'application Python pour la migration, avec les paramètres définis dans les fichiers d'environnement `.env`.
+## Logs
 
 Les logs seront enregistrés dans un fichier nommé data_migration.log. Vous pouvez consulter ce fichier pour vérifier l'état de l'importation et résoudre tout problème potentiel.
 
