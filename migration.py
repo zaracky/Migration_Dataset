@@ -19,12 +19,12 @@ logging.basicConfig(
 )
 
 # Récupérer les variables d'environnement pour MongoDB
-dev_user = os.getenv("DEV_USERNAME")
-dev_password = os.getenv("DEV_PASSWORD")
-mongo_host = os.getenv("MONGO_HOST", "localhost")
-mongo_port = os.getenv("MONGO_PORT", "27017")
-database_name = os.getenv("DATABASE_NAME", "entreprise")
-collection_name = os.getenv("COLLECTION_NAME", "entreprise")
+write_user = os.getenv("WRITE_USERNAME")
+write_password = os.getenv("WRITE_PASSWORD")
+mongo_host = os.getenv("MONGO_HOST")
+mongo_port = os.getenv("MONGO_PORT")
+database_name = os.getenv("DATABASE_NAME")
+collection_name = os.getenv("COLLECTION_NAME")
 
 # Fonction pour nettoyer et transformer les types de données
 def transform_row(row):
@@ -77,9 +77,9 @@ def transform_row(row):
 # Connexion à MongoDB
 def connect_to_mongodb(db_name=database_name, collection_name=collection_name):
     """
-    Se connecte à MongoDB en tant qu'utilisateur admin.
+    Se connecte à MongoDB en tant qu'utilisateur avec des droits d'écriture.
     """
-    uri = f"mongodb://{dev_user}:{dev_password}@{mongo_host}:{mongo_port}/{db_name}"
+    uri = f"mongodb://{write_user}:{write_password}@{mongo_host}:{mongo_port}/{db_name}"
     try:
         client = MongoClient(uri)
         db = client[db_name]
