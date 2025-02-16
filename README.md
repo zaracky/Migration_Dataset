@@ -72,10 +72,7 @@ Le programme vise à automatiser l'importation de données depuis un fichier CSV
 
 `pip install -r requirements.txt`
 
-4.Vérifiez votre instance MongoDB : 
-Assurez-vous que MongoDB fonctionne et que vous pouvez vous connecter avec les informations fournies dans le fichier .env. Si vous utilisez Docker pour MongoDB, assurez-vous que le conteneur est en cours d'exécution:
 
-`docker-compose up --build `
 ## Exécution du script
 Une fois que vous avez configuré l'environnement, vous pouvez exécuter le script principal (script.py) avec la commande suivante :
 
