@@ -111,12 +111,20 @@ def create_indexes(collection):
 
 # Importation des données CSV avec insertion par lots
 def import_csv_to_mongodb(csv_file_path, collection, batch_size=5000):
+    """
+    Importe les données d'un fichier CSV dans une collection MongoDB avec insertion par lots.
+    
+    Paramètres :
+    - csv_file_path : chemin du fichier CSV à importer.
+    - collection : collection MongoDB où insérer les données.
+    - batch_size : nombre de documents à insérer par lot (par défaut 5000).
+    """
     try:
         with open(csv_file_path, mode="r", encoding="utf-8") as csv_file:
-            reader = csv.DictReader(csv_file)
-            batch = []
-            count = 0
-            duplicates = 0
+            reader = csv.DictReader(csv_file)  # Lit le fichier CSV sous forme de dictionnaire
+            batch = [] # Liste pour stocker les documents avant insertion par lot
+            count = 0 # Compteur du nombre total de lignes lues
+            duplicates = 0 # Compteur des doublons détectés
             
             for row in reader:
                 row = transform_row(row)  # Transformer les types avant insertion
@@ -128,28 +136,43 @@ def import_csv_to_mongodb(csv_file_path, collection, batch_size=5000):
                     logging.warning(f"Doublon détecté pour {row['Name']} (Room: {row['Room Number']}, Admission Date: {row['Date of Admission']}). Ce document ne sera pas importé.")
                     duplicates += 1
                     continue  # Ne pas insérer ce doublon dans la base de données
-                
+
+                # Insertion en lot lorsque la taille du batch atteint la limite définie
                 if len(batch) == batch_size:
                     collection.insert_many(batch, ordered=False)
                     logging.info(f"{len(batch)} documents insérés.")
-                    batch = []
+                    batch = [] # Réinitialisation du batch après insertion
             
+            # Insère les documents restants si la taille du batch est inférieure à batch_size
             if batch:
                 collection.insert_many(batch, ordered=False)
                 logging.info(f"{len(batch)} documents restants insérés.")
             
             logging.info(f"Importation terminée : {count} lignes insérées au total.")
+             # Affichage du nombre de doublons ignorés
             if duplicates > 0:
                 logging.warning(f"{duplicates} doublons ont été ignorés.")
     except FileNotFoundError:
+        # Gestion de l'erreur si le fichier CSV est introuvable
         logging.error(f"Fichier CSV introuvable : {csv_file_path}")
         raise
     except errors.BulkWriteError as bwe:
+        # Gestion des erreurs lors de l'insertion en lot dans MongoDB
         logging.error(f"Erreur lors de l'insertion en lot : {bwe.details}")
 
 
 # Test d'intégrité des données
 def test_data_integrity(collection):
+        """
+    Vérifie l'intégrité des données dans une collection MongoDB.
+    
+    Tests effectués :
+    - Vérification de la présence des colonnes attendues.
+    - Vérification des types de données pour certaines colonnes clés.
+    - Détection des doublons basés sur "Name", "Room Number" et "Date of Admission".
+    - Détection des valeurs manquantes.
+    """
+    
     logging.info("Début des tests d'intégrité...")
     success = True
 
@@ -196,7 +219,7 @@ def test_data_integrity(collection):
             if value in [None, ""]:
                 logging.error(f"Valeur manquante pour '{key}' dans le document {doc}")
                 success = False
-
+# Affichage du résultat final des tests
     if success:
         logging.info("Tous les tests d'intégrité ont réussi.")
     else:
